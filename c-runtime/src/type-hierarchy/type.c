@@ -16,10 +16,11 @@
 #include "function-args.h"
 #include "simple_hash_map.h"
 
-typedef struct __MPyTypeContent {
+typedef struct __MPyTypeContent
+{
     const char *name;
     bool builtin;
-    __MPyHashMap *attributes; //str->__MPyObj*
+    __MPyHashMap *attributes; // str->__MPyObj*
     /**
      * The parent *type* of this class, e. g. another type object.
      *
@@ -29,22 +30,26 @@ typedef struct __MPyTypeContent {
     __MPyObj *parent; // no multiple inheritance for now
 } __MPyTypeContent;
 
-void cleanup_attribute_entry(const char *_key, __MPyObj* value) {
+void cleanup_attribute_entry(const char *_key, __MPyObj *value)
+{
     (void)_key;
     __mpy_obj_ref_dec(value);
 }
 
-void __mpy_obj_cleanup_type(__MPyObj *self) {
-    __MPyTypeContent *content = (__MPyTypeContent*) self->content;
+void __mpy_obj_cleanup_type(__MPyObj *self)
+{
+    __MPyTypeContent *content = (__MPyTypeContent *)self->content;
 
-    if (content->attributes != NULL) {
-        __mpy_hash_map_iter(content->attributes, (void (*)(void*,void*)) cleanup_attribute_entry);
+    if (content->attributes != NULL)
+    {
+        __mpy_hash_map_iter(content->attributes, (void (*)(void *, void *))cleanup_attribute_entry);
         __mpy_hash_map_clear(content->attributes);
         free(content->attributes);
     }
 }
 
-__MPyObj* __mpy_obj_init_type_builtin(const char *name, __MPyObj *self, __MPyHashMap *attributes, __MPyObj *parentType) {
+__MPyObj *__mpy_obj_init_type_builtin(const char *name, __MPyObj *self, __MPyHashMap *attributes, __MPyObj *parentType)
+{
     self->type = __MPyType_Type;
     self->cleanupAction = __mpy_obj_cleanup_type;
     self->attrAccessor = __mpy_type_get_attr_impl;
@@ -52,7 +57,7 @@ __MPyObj* __mpy_obj_init_type_builtin(const char *name, __MPyObj *self, __MPyHas
     self->parent = __mpy_obj_init_object(); // this 'parent' is an instance of this classes parent type (i.e. *always* object)
 
     self->content = __mpy_checked_malloc(sizeof(__MPyTypeContent));
-    __MPyTypeContent *content = (__MPyTypeContent*) self->content;
+    __MPyTypeContent *content = (__MPyTypeContent *)self->content;
     content->name = name;
     content->builtin = true;
     content->attributes = attributes;
@@ -61,51 +66,73 @@ __MPyObj* __mpy_obj_init_type_builtin(const char *name, __MPyObj *self, __MPyHas
     return __mpy_obj_return(self);
 }
 
-__MPyObj* __mpy_obj_init_type(const char *name, __MPyObj *parentType) {
+__MPyObj *__mpy_obj_init_type(const char *name, __MPyObj *parentType)
+{
     __MPyObj *self = __mpy_obj_new();
     __mpy_obj_init_type_builtin(name, self, __mpy_hash_map_init(&__mpy_hash_map_str_key_cmp), parentType);
 
-    __MPyTypeContent *content = (__MPyTypeContent*) self->content;
+    __MPyTypeContent *content = (__MPyTypeContent *)self->content;
     content->builtin = false;
 
     return __mpy_obj_return(self);
 }
 
-const char* __mpy_type_name(__MPyObj *self) {
+const char *__mpy_type_name(__MPyObj *self)
+{
     assert(self != NULL && self->type == __MPyType_Type);
 
-    return ((__MPyTypeContent*)self->content)->name;
+    return ((__MPyTypeContent *)self->content)->name;
 }
 
-__MPyObj *__mpy_type_set_attr_impl(__MPyObj *self, const char *name, __MPyObj *value) {
-    __MPyTypeContent *content = (__MPyTypeContent*) self->content;
+int __mpy_type_check(__MPyObj *ref, __MPyObj *ex)
+{
+    const char *ref_type = __mpy_type_name(ref->type);
+    const char *ex_type = __mpy_type_name(ex->type);
 
-    if (content->builtin) {
+    if (ref_type == ex_type)
+    {
+        return 1;
+    }
+    fprintf(stderr, "TypeError: can't assign value of type '%s' to variable of type '%s'\n", ref_type, ex_type);
+    __mpy_fatal_error(__MPY_ERROR_USER);
+    return 0;
+}
+
+__MPyObj *__mpy_type_set_attr_impl(__MPyObj *self, const char *name, __MPyObj *value)
+{
+    __MPyTypeContent *content = (__MPyTypeContent *)self->content;
+
+    if (content->builtin)
+    {
         fprintf(stderr, "TypeError: can't set attributes of builtin type '%s'\n", content->name);
         __mpy_fatal_error(__MPY_ERROR_USER);
-    } 
+    }
 
-    __MPyObj *previousValue = __mpy_hash_map_put(content->attributes, (void*) name, value);
+    __MPyObj *previousValue = __mpy_hash_map_put(content->attributes, (void *)name, value);
     __mpy_obj_ref_inc(value);
 
-    if (previousValue != NULL) {
+    if (previousValue != NULL)
+    {
         __mpy_obj_ref_dec(previousValue);
     }
 
     return self;
 }
 
-__MPyObj *__mpy_type_get_attr_impl(__MPyObj *self, const char *name) {
-    __MPyTypeContent *content = (__MPyTypeContent*) self->content;
-    __MPyObj *attr = __mpy_hash_map_get(content->attributes, (void*) name);
-    if (attr != NULL) {
+__MPyObj *__mpy_type_get_attr_impl(__MPyObj *self, const char *name)
+{
+    __MPyTypeContent *content = (__MPyTypeContent *)self->content;
+    __MPyObj *attr = __mpy_hash_map_get(content->attributes, (void *)name);
+    if (attr != NULL)
+    {
         return __mpy_obj_return(attr);
     }
 
     return NULL;
 }
 
-__MPyObj *__mpy_type_func_str_impl(__MPyObj *args, __MPyObj *kwargs) {
+__MPyObj *__mpy_type_func_str_impl(__MPyObj *args, __MPyObj *kwargs)
+{
     assert(args != NULL && kwargs != NULL);
 
     __MPyGetArgsState argHelper = __mpy_args_init("type.__str__", args, kwargs, 1);
@@ -113,21 +140,24 @@ __MPyObj *__mpy_type_func_str_impl(__MPyObj *args, __MPyObj *kwargs) {
     __mpy_args_finish(&argHelper);
 
     __mpy_obj_ref_dec(self);
-    return __mpy_obj_return(__mpy_obj_init_str_static(((__MPyTypeContent*)self->content)->name));
+    return __mpy_obj_return(__mpy_obj_init_str_static(((__MPyTypeContent *)self->content)->name));
 }
 
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-void bind_method(void *_attrName, void *_attrValue, void *_newInstance) {
+void bind_method(void *_attrName, void *_attrValue, void *_newInstance)
+{
     const char *attrName = _attrName;
     __MPyObj *attrValue = _attrValue;
     __MPyObj *newInstance = _newInstance;
 
-    if (attrValue->type == __MPyType_Function) {
+    if (attrValue->type == __MPyType_Function)
+    {
         (void)*(newInstance->attrSetter)(newInstance, attrName, __mpy_bind_func(attrValue, newInstance));
     }
 }
 
-__MPyObj *__mpy_type_func_call_impl(__MPyObj *args, __MPyObj *kwargs) {
+__MPyObj *__mpy_type_func_call_impl(__MPyObj *args, __MPyObj *kwargs)
+{
     assert(args != NULL && kwargs != NULL);
 
     __MPyGetArgsState argHelper = __mpy_args_init("type.__call__", args, kwargs, 1);
@@ -147,7 +177,8 @@ __MPyObj *__mpy_type_func_call_impl(__MPyObj *args, __MPyObj *kwargs) {
     return instance;
 }
 
-__MPyObj* __mpy_type_get_parent_type(__MPyObj *self) {
+__MPyObj *__mpy_type_get_parent_type(__MPyObj *self)
+{
     assert(self->type == __MPyType_Type);
     __MPyTypeContent *content = self->content;
     assert(content->parent != NULL);
@@ -165,5 +196,4 @@ __MPyObj* __mpy_type_get_parent_type(__MPyObj *self) {
 /*     __MPyObj *name = __mpy_args_get_positional(&argHelper, 0, "name"); */
 /*     __mpy_args_finish(&argHelper); */
 
-    
 /* } */

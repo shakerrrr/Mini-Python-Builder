@@ -18,6 +18,8 @@ public class AttributeReference implements Expression {
      */
     private Expression object;
 
+    private String type;
+
     /**
      * Create a new attribute reference for the given object.
      *
@@ -27,12 +29,13 @@ public class AttributeReference implements Expression {
      * a.__str__ # AttributeReference("__str__", new Reference("a"))
      * ```
      *
-     * @param name The name of the reference.
+     * @param name   The name of the reference.
      * @param object The object to retrieve the reference from.
      */
-    public AttributeReference(String name, Expression object) {
+    public AttributeReference(String name, Expression object, String type) {
         this.name = name;
         this.object = object;
+        this.type = type;
     }
 
     /**
@@ -68,5 +71,11 @@ public class AttributeReference implements Expression {
      *
      * @return The name of the attribute.
      */
-    public String getName() { return this.name; }
+    public String getName() {
+        return this.name;
+    }
+
+    public String getType() {
+        return this.type;
+    }
 }
