@@ -31,7 +31,8 @@ public class AttributeAssignment implements Statement {
 
     @Override
     public String buildStatement() {
-        return "__mpy_type_check(" + attribute.getName() + "," + value.buildExpression() + ");\n" +
+        return "__mpy_type_check(" + "__mpy_obj_get_attr(" + attribute.buildObject() + ", " + attribute.buildName()
+                + ")" + "," + value.buildExpression() + ");\n" +
                 "__mpy_obj_set_attr(" + attribute.buildObject() + ", " + attribute.buildName() + ", "
                 + value.buildExpression() + ");";
     }
