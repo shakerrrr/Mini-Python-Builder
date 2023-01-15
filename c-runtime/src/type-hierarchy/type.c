@@ -89,12 +89,7 @@ __MPyObj *__mpy_type_check(__MPyObj *ref, __MPyObj *ex)
     const char *ref_type = __mpy_type_name(ref->expl_type);
     const char *ex_type = __mpy_type_name(ex->type);
     fprintf(stderr, " '%s'  '%s'\n", ex_type, ref_type);
-    if (ref->expl_type == __MPyType_None)
-    {
-        ex->expl_type = ex->type;
-        return ex;
-    }
-    if (ref->expl_type == ex->type)
+    if (!strcmp(ref_type, "none") || !strcmp(ref_type, ex_type))
     {
         ex->expl_type = ref->expl_type;
         return ex;
