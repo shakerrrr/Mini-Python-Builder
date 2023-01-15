@@ -86,9 +86,9 @@ const char *__mpy_type_name(__MPyObj *self)
 
 int __mpy_type_check(__MPyObj *ref, __MPyObj *ex)
 {
-    const char *ref_type = __mpy_type_name(ref->expl_type);
+    const char *ref_type = __mpy_type_name(ref->type);
     const char *ex_type = __mpy_type_name(ex->type);
-    if (!strcmp(ref_type, "") || !strcmp(ref_type, "tuple") || !strcmp(ref_type, ex_type))
+    if (!strcmp(ref_type, "object") || !strcmp(ref_type, "tuple") || !strcmp(ref_type, ex_type))
     {
         return 1;
     }

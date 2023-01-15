@@ -87,26 +87,25 @@ __MPyObj *__mpy_obj_init_object_w_type(const char *type)
     __MPyObj *obj = __mpy_obj_new();
     if (!strcmp(type, "num"))
     {
-        obj->expl_type = __MPyType_Num;
+        obj->type = __MPyType_Num;
     }
     else if (!strcmp(type, "str"))
     {
-        obj->expl_type = __MPyType_Str;
+        obj->type = __MPyType_Str;
     }
     else if (!strcmp(type, "bool"))
     {
-        obj->expl_type = __MPyType_Boolean;
+        obj->type = __MPyType_Boolean;
     }
     else if (!strcmp(type, ""))
     {
-        obj->expl_type = __MPyType_Object;
+        obj->type = __MPyType_Object;
     }
     else
     {
-        obj->expl_type = __mpy_obj_init_type(type, __MPyType_Object)->type;
+        obj->type = __mpy_obj_init_type(type, __MPyType_Object)->type;
     }
 
-    obj->type = __MPyType_Object;
     obj->content = __mpy_hash_map_init(&__mpy_hash_map_str_key_cmp);
     obj->cleanupAction = cleanup_object;
     obj->attrSetter = __mpy_object_set_attr_impl;
