@@ -15,7 +15,8 @@
 #include "literals/tuple.h"
 #include "function-args.h"
 
-__MPyObj* __mpy_object_func_str_impl(__MPyObj *args, __MPyObj *kwargs) {
+__MPyObj *__mpy_object_func_str_impl(__MPyObj *args, __MPyObj *kwargs)
+{
     assert(args != NULL && kwargs != NULL);
 
     __MPyGetArgsState argHelper = __mpy_args_init("object.__str__", args, kwargs, 1);
@@ -24,7 +25,8 @@ __MPyObj* __mpy_object_func_str_impl(__MPyObj *args, __MPyObj *kwargs) {
 
     unsigned int id = self->id;
     size_t digits = 1; // at least one digit
-    while (id > 9) {
+    while (id > 9)
+    {
         digits++;
         id = id / 10;
     }
@@ -41,40 +43,80 @@ __MPyObj* __mpy_object_func_str_impl(__MPyObj *args, __MPyObj *kwargs) {
     return __mpy_obj_return(__mpy_obj_init_str_dynamic(string));
 }
 
-void cleanup_attr_entry(const char *name, __MPyObj* obj) {
+void cleanup_attr_entry(const char *name, __MPyObj *obj)
+{
     // key is char*, so not eligible for cleanup
 
     // but the value, obj, is
     __mpy_obj_ref_dec(obj);
 }
 
-void cleanup_object(__MPyObj *self) {
-    __MPyHashMap *map = (__MPyHashMap*) self->content;
+void cleanup_object(__MPyObj *self)
+{
+    __MPyHashMap *map = (__MPyHashMap *)self->content;
 
-    __mpy_hash_map_iter(map, (void (*)(void*,void*)) cleanup_attr_entry);
+    __mpy_hash_map_iter(map, (void (*)(void *, void *))cleanup_attr_entry);
     __mpy_hash_map_clear(map);
 
-    if (self->parent != NULL) {
+    if (self->parent != NULL)
+    {
         __mpy_obj_ref_dec(self->parent);
     }
 }
 
-__MPyObj *__mpy_object_set_attr_impl(__MPyObj *self, const char *name, __MPyObj *value) {
-    __MPyObj *previousValue = __mpy_hash_map_put(self->content, (void*) name, value);
+__MPyObj *__mpy_object_set_attr_impl(__MPyObj *self, const char *name, __MPyObj *value)
+{
+    __MPyObj *previousValue = __mpy_hash_map_put(self->content, (void *)name, value);
     __mpy_obj_ref_inc(value);
 
-    if (previousValue != NULL) {
+    if (previousValue != NULL)
+    {
         __mpy_obj_ref_dec(previousValue);
     }
 
     return self;
 }
 
-__MPyObj *__mpy_object_get_attr_impl(__MPyObj *self, const char *name) {
-    return __mpy_hash_map_get(self->content, (void*) name);
+__MPyObj *__mpy_object_get_attr_impl(__MPyObj *self, const char *name)
+{
+    return __mpy_hash_map_get(self->content, (void *)name);
 }
 
-__MPyObj *__mpy_obj_init_object() {
+__MPyObj *__mpy_obj_init_object_w_type(const char *type)
+{
+    __MPyObj *obj = __mpy_obj_new();
+    if (!strcmp(type, "num"))
+    {
+        obj->expl_type = __MPyType_Num;
+    }
+    else if (!strcmp(type, "str"))
+    {
+        obj->expl_type = __MPyType_Str;
+    }
+    else if (!strcmp(type, "bool"))
+    {
+        obj->expl_type = __MPyType_Boolean;
+    }
+    else if (!strcmp(type, ""))
+    {
+        obj->expl_type = __MPyType_Object;
+    }
+    else
+    {
+        obj->expl_type = __mpy_obj_init_type(type, __MPyType_Object)->type;
+    }
+
+    obj->type = __MPyType_Object;
+    obj->content = __mpy_hash_map_init(&__mpy_hash_map_str_key_cmp);
+    obj->cleanupAction = cleanup_object;
+    obj->attrSetter = __mpy_object_set_attr_impl;
+    obj->attrAccessor = __mpy_object_get_attr_impl;
+
+    return __mpy_obj_return(obj);
+}
+
+__MPyObj *__mpy_obj_init_object()
+{
     __MPyObj *obj = __mpy_obj_new();
     obj->type = __MPyType_Object;
     obj->content = __mpy_hash_map_init(&__mpy_hash_map_str_key_cmp);
@@ -87,7 +129,8 @@ __MPyObj *__mpy_obj_init_object() {
 
 // TODO finish implementation of this method and use it
 // for object initialisation in call.c instead of directly calling __call__ there
-__MPyObj* __mpy_object_func_new_impl(__MPyObj *args, __MPyObj *kwargs) {
+__MPyObj *__mpy_object_func_new_impl(__MPyObj *args, __MPyObj *kwargs)
+{
     assert(args != NULL && kwargs != NULL);
 
     // cls (pos 0, name cls) needs to be the class (type) of the object
@@ -103,7 +146,8 @@ __MPyObj* __mpy_object_func_new_impl(__MPyObj *args, __MPyObj *kwargs) {
     return __mpy_obj_return(obj);
 }
 
-__MPyObj *__mpy_object_func_init_impl(__MPyObj *args, __MPyObj *kwargs) {
+__MPyObj *__mpy_object_func_init_impl(__MPyObj *args, __MPyObj *kwargs)
+{
     assert(args != NULL && kwargs != NULL);
 
     __MPyGetArgsState argHelper = __mpy_args_init("object.__init__", args, kwargs, 1);
@@ -115,7 +159,8 @@ __MPyObj *__mpy_object_func_init_impl(__MPyObj *args, __MPyObj *kwargs) {
     return __mpy_obj_return(__mpy_obj_init_object());
 }
 
-__MPyObj *__mpy_object_func_bool_impl(__MPyObj *args, __MPyObj *kwargs) {
+__MPyObj *__mpy_object_func_bool_impl(__MPyObj *args, __MPyObj *kwargs)
+{
     assert(args != NULL && kwargs != NULL);
 
     __MPyGetArgsState argHelper = __mpy_args_init("object.__init__", args, kwargs, 1);

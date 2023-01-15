@@ -5,9 +5,11 @@
 
 __MPyObj *__mpy_obj_init_object();
 
-__MPyObj* __mpy_object_func_str_impl(__MPyObj *args, __MPyObj *kwargs);
+__MPyObj *__mpy_obj_init_object_w_type(const char *type);
 
-__MPyObj* __mpy_object_func_new_impl(__MPyObj *args, __MPyObj *kwargs);
+__MPyObj *__mpy_object_func_str_impl(__MPyObj *args, __MPyObj *kwargs);
+
+__MPyObj *__mpy_object_func_new_impl(__MPyObj *args, __MPyObj *kwargs);
 
 __MPyObj *__mpy_object_func_init_impl(__MPyObj *args, __MPyObj *kwargs);
 

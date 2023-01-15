@@ -22,7 +22,7 @@ public class AttributeAssignment implements Statement {
      * Create a new attribute assignment.
      *
      * @param attribute The reference of the attribute in the object scope.
-     * @param value The value to assign to the attribute.
+     * @param value     The value to assign to the attribute.
      */
     public AttributeAssignment(AttributeReference attribute, Expression value) {
         this.attribute = attribute;
@@ -31,6 +31,8 @@ public class AttributeAssignment implements Statement {
 
     @Override
     public String buildStatement() {
-        return "__mpy_obj_set_attr(" + attribute.buildObject() + ", " + attribute.buildName() + ", " +  value.buildExpression() + ");";
+        return "__mpy_type_check(" + attribute.getName() + "," + value.buildExpression() + ");\n" +
+                "__mpy_obj_set_attr(" + attribute.buildObject() + ", " + attribute.buildName() + ", "
+                + value.buildExpression() + ");";
     }
 }
