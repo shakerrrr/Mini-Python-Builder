@@ -46,6 +46,18 @@ public class Function extends Reference {
      * @param localVariables Variables declared inside the function.
      */
     public Function(String funcName, List<Statement> body, List<Argument> positionalArgs,
+            List<VariableDeclaration> localVariables) {
+        super(funcName);
+        this.cName = funcName;
+        this.body = body;
+        this.positionalArgs = positionalArgs;
+        this.receivesPackedKeywordArgs = false;
+        this.receivesPackedPositionalArgs = false;
+        this.localVariables = localVariables;
+        retType = "";
+    }
+
+    public Function(String funcName, List<Statement> body, List<Argument> positionalArgs,
             List<VariableDeclaration> localVariables, String retType) {
         super(funcName);
         this.cName = funcName;

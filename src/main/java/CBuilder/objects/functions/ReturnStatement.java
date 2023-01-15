@@ -16,6 +16,11 @@ public class ReturnStatement implements Statement {
      *
      * @param returnValue return value of this return statement
      */
+    public ReturnStatement(Expression returnValue) {
+        this.returnValue = returnValue;
+        this.returnType = "";
+    }
+
     public ReturnStatement(Expression returnValue, String returnType) {
         this.returnValue = returnValue;
         this.returnType = returnType;

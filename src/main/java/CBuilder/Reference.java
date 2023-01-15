@@ -27,6 +27,11 @@ public class Reference implements Expression {
         this.type = type;
     }
 
+    public Reference(String name) {
+        this.name = name;
+        this.type = "";
+    }
+
     /**
      * Get the reference name.
      *

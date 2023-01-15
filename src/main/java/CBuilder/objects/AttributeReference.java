@@ -32,6 +32,12 @@ public class AttributeReference implements Expression {
      * @param name   The name of the reference.
      * @param object The object to retrieve the reference from.
      */
+    public AttributeReference(String name, Expression object) {
+        this.name = name;
+        this.object = object;
+        this.type = "";
+    }
+
     public AttributeReference(String name, Expression object, String type) {
         this.name = name;
         this.object = object;
