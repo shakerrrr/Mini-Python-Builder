@@ -21,6 +21,6 @@ __MPyObj *__mpy_type_get_parent_type(__MPyObj *self);
 
 const char *__mpy_type_name(__MPyObj *self);
 
-int __mpy_type_check(__MPyObj *ref, __MPyObj *ex);
+__MPyObj *__mpy_type_check(__MPyObj *ref, __MPyObj *ex);
 
 #endif

@@ -47,8 +47,7 @@ public class Assignment implements Statement {
             // if it's still in use afterwards.
             return "__mpy_obj_ref_inc(" + rhs + ");\n" +
                     "__mpy_obj_ref_dec(" + lhs + ");\n" +
-                    "__mpy_type_check(" + lhs + "," + rhs + ");\n" +
-                    lhs + " = " + rhs + ";\n";
+                    lhs + " = " + "__mpy_type_check(" + lhs + "," + rhs + ");\n";
         } else {
             // Note: Order is not important here, since returned values (literals or
             // function calls)
@@ -57,8 +56,7 @@ public class Assignment implements Statement {
             // is not problematic (e. g. def returnSelf(x): return x; x = 10; x =
             // returnSelf(x); works even if decrementing first)
             return "__mpy_obj_ref_dec(" + lhs + ");\n" +
-                    "__mpy_type_check(" + lhs + "," + rhs + ");\n" +
-                    lhs + " = " + rhs + ";\n" +
+                    lhs + " = " + "__mpy_type_check(" + lhs + "," + rhs + ");\n" +
                     "__mpy_obj_ref_inc(" + lhs + ");\n";
         }
     }
