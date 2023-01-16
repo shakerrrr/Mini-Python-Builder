@@ -72,6 +72,7 @@ __MPyObj *__mpy_object_set_attr_impl(__MPyObj *self, const char *name, __MPyObj 
 
     if (previousValue != NULL)
     {
+        __mpy_type_check(previousValue, value);
         __mpy_obj_ref_dec(previousValue);
     }
 
