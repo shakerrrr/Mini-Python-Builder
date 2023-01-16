@@ -25,6 +25,7 @@ public class Function extends Reference {
     private final List<VariableDeclaration> localVariables;
 
     private final String retType;
+    private final List<String> argTypes;
 
     /**
      * Create a new function (or method).
@@ -54,11 +55,12 @@ public class Function extends Reference {
         this.receivesPackedKeywordArgs = false;
         this.receivesPackedPositionalArgs = false;
         this.localVariables = localVariables;
-        retType = "";
+        this.retType = null;
+        this.argTypes = null;
     }
 
     public Function(String funcName, List<Statement> body, List<Argument> positionalArgs,
-            List<VariableDeclaration> localVariables, String retType) {
+            List<VariableDeclaration> localVariables, String retType, List<String> argTypes) {
         super(funcName);
         this.cName = funcName;
         this.body = body;
@@ -67,6 +69,7 @@ public class Function extends Reference {
         this.receivesPackedPositionalArgs = false;
         this.localVariables = localVariables;
         this.retType = retType;
+        this.argTypes = argTypes;
     }
 
     /**
