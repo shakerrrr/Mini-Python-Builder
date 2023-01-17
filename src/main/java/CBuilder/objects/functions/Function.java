@@ -135,6 +135,8 @@ public class Function extends Reference {
         // kept in sync with [ReturnStatement]
         body.append("__MPyObj *retValue = NULL;\n\n");
 
+        body.append("__MPyObj *tmp_attr_obj = NULL;\n");
+
         for (VariableDeclaration v : this.localVariables) {
             body.append(v.build(true));
         }
@@ -147,6 +149,9 @@ public class Function extends Reference {
         for (Argument arg : positionalArgs) {
             body.append(arg.buildArgCleanup());
         }
+        body.append("if (tmp_attr_obj != NULL){\n");
+        body.append("\t__mpy_obj_ref_dec(tmp_attr_obj);\n");
+        body.append("}\n");
         body.append("\n");
 
         body.append("goto ret;\n"); // ugly hack to prevent 'unused label' c compiler warning/error
