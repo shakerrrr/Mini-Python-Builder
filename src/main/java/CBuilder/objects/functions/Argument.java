@@ -43,7 +43,7 @@ public class Argument {
      * @return Code extracting this argument from a function's argument extractor.
      */
     public String buildArgExtraction() {
-        if (type != null) {
+        if (type != null && type != "") {
             return "__MPyObj *" + name + " = __mpy_obj_init_object_w_type(" + "\"" + type + "\"" + ");\n" +
                     "__mpy_obj_ref_inc(" + name + ");\n" +
                     name + " = " + "__mpy_type_check(" + name + ", " + "__mpy_args_get_positional(&argHelper, "
