@@ -105,11 +105,10 @@ __MPyObj *__mpy_obj_init_object_w_type(const char *type)
     }
     else
     {
-        fprintf(stderr, "%s\n", __mpy_type_name(__mpy_obj_init_type(type, __MPyType_Object)));
         obj->expl_type = __mpy_obj_init_type(type, __MPyType_Object);
     }
-    obj->type = __MPyType_Object;
 
+    obj->type = __MPyType_Object;
     obj->content = __mpy_hash_map_init(&__mpy_hash_map_str_key_cmp);
     obj->cleanupAction = cleanup_object;
     obj->attrSetter = __mpy_object_set_attr_impl;

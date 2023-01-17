@@ -92,6 +92,7 @@ __MPyObj *__mpy_type_check(__MPyObj *ref, __MPyObj *ex)
     if (!strcmp(ref_type, "none") || !strcmp(ref_type, ex_type))
     {
         ex->expl_type = ref->expl_type;
+        __mpy_obj_ref_dec(ref);
         return ex;
     }
     fprintf(stderr, "TypeError: can't assign value of type '%s' to variable of type '%s'\n", ex_type, ref_type);

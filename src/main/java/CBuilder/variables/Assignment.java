@@ -55,9 +55,8 @@ public class Assignment implements Statement {
             // call, so calling _dec first
             // is not problematic (e. g. def returnSelf(x): return x; x = 10; x =
             // returnSelf(x); works even if decrementing first)
-            return "__mpy_obj_ref_inc(" + lhs + ");\n" +
-                    "__mpy_obj_ref_dec(" + lhs + ");\n" +
-                    lhs + " = " + "__mpy_type_check(" + lhs + ", " + rhs + ");\n";
+            return lhs + " = " + "__mpy_type_check(" + lhs + ", " + rhs + ");\n" +
+                    "__mpy_obj_ref_inc(" + lhs + ");\n";
         }
     }
 
