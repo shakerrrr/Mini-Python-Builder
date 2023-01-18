@@ -4,7 +4,7 @@
 #include "stdbool.h"
 
 /**
- * @file 
+ * @file
  */
 
 /**
@@ -24,7 +24,7 @@ typedef void (*__mpy_obj_cleanup_action)(__MPyObj *self);
  * @param name Name of the attribute to get.
  * @return The value of the attribute or NULL if the object does not have an attribute named name.
  */
-typedef __MPyObj* (*__mpy_object_get_attr) (__MPyObj *self, const char *name);
+typedef __MPyObj *(*__mpy_object_get_attr)(__MPyObj *self, const char *name);
 
 /**
  * @param self Instance to modify the attribute on.
@@ -32,30 +32,34 @@ typedef __MPyObj* (*__mpy_object_get_attr) (__MPyObj *self, const char *name);
  * @param value New value of the attribute.
  * @return self to allow chaining with this method.
  */
-typedef __MPyObj* (*__mpy_object_set_attr) (__MPyObj *self, const char *name, __MPyObj *value);
+typedef __MPyObj *(*__mpy_object_set_attr)(__MPyObj *self, const char *name, __MPyObj *value);
 
-struct __MPyObj {
+struct __MPyObj
+{
     /**
      * unique id of the object
      */
-    unsigned int id; 
+    unsigned int id;
     /**
      * pointer to the content of the object - managed by type specific implementation
      */
-    void *content; 
+    void *content;
     /**
      * pointer to the refCount - *not* managed by type specific implementation
      */
-    unsigned int refCount; 
+    unsigned int refCount;
     /**
      * pointer to the objects type
      */
-    __MPyObj *type; 
+    __MPyObj *type;
+
+    __MPyObj *expl_type;
+
     /**
-     * allow an object to temporarily keep its content longer than refCount implies 
+     * allow an object to temporarily keep its content longer than refCount implies
      * by setting this to true instead of decrementing refCount
      */
-    bool temporary; 
+    bool temporary;
     /**
      * Allow builtin objects with additional allocations inside content to deallocate them.
      */
@@ -81,12 +85,12 @@ struct __MPyObj {
 /**
  * This function *must* be called before returning a __MPyObj from a function.
  */
-__MPyObj* __mpy_obj_return(__MPyObj*);
+__MPyObj *__mpy_obj_return(__MPyObj *);
 
 /**
  * Initialises a new __MPyObj.
  */
-__MPyObj* __mpy_obj_new();
+__MPyObj *__mpy_obj_new();
 
 /**
  * Increment the ref count if the object is used in another context.
@@ -100,8 +104,8 @@ void __mpy_obj_ref_inc(__MPyObj *obj);
  */
 void __mpy_obj_ref_dec(__MPyObj *obj);
 
-__MPyObj* __mpy_obj_get_attr(__MPyObj *self, const char* name);
+__MPyObj *__mpy_obj_get_attr(__MPyObj *self, const char *name);
 
-__MPyObj* __mpy_obj_set_attr(__MPyObj *self, const char *name, __MPyObj *value);
+__MPyObj *__mpy_obj_set_attr(__MPyObj *self, const char *name, __MPyObj *value);
 
 #endif

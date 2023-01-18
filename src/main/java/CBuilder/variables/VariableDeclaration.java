@@ -11,6 +11,8 @@ public class VariableDeclaration {
      */
     protected String name;
 
+    protected String type;
+
     /**
      * Create a new variable declaration.
      *
@@ -18,23 +20,31 @@ public class VariableDeclaration {
      */
     public VariableDeclaration(String name) {
         this.name = name;
+        this.type = "";
+    }
+
+    public VariableDeclaration(String name, String type) {
+        this.name = name;
+        this.type = type;
     }
 
     /**
      * Create the c-code for initializing an object to variable.
      *
-     * @return A string with c-code which represents the object initialization for the variable.
+     * @return A string with c-code which represents the object initialization for
+     *         the variable.
      */
     private String initialisation() {
         // FIXME: init none instead of object
-        return " = __mpy_obj_init_object();\n" +
+        return " = __mpy_obj_init_object_w_type(" + "\"" + type + "\"" + ");\n" +
                 "__mpy_obj_ref_inc(" + name + ")";
     }
 
     /**
      * Create the c-code for declaring an object to the variable.
      *
-     * @param initialize Boolean to chose if object initialization should be included.
+     * @param initialize Boolean to chose if object initialization should be
+     *                   included.
      * @return A string with c-code which represents the variable declaration.
      */
     public String build(boolean initialize) {
@@ -57,7 +67,8 @@ public class VariableDeclaration {
     /**
      * Create the c-code to decrement the reference counter of the variable.
      *
-     * @return A string which represents the c-code to decrement the reference counter of the variable
+     * @return A string which represents the c-code to decrement the reference
+     *         counter of the variable
      */
     public String buildRefDec() {
         return "__mpy_obj_ref_dec(" + name + ");\n";
